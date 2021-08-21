@@ -1,6 +1,7 @@
 import random as r
 import numpy as np
 import plotly.figure_factory as ff
+import plotly.graph_objs as go
 from math import ceil
 
 # Preliminary account details
@@ -127,3 +128,17 @@ if __name__ == "__main__":
         xaxis_title='Num Summons'
     )
     fig.show()
+
+    # Generate a CDF plot of the distributions
+    # Referenced: https://stackoverflow.com/questions/65402296/python-plotly-cdf-with-frequency-distribution-data
+    hist, bin_edges = np.histogram(extra_summons_list, bins=(getWorstCaseList(extra_summons_list) - getBestCaseList(extra_summons_list)), density=True)
+    cdf = np.cumsum(hist * np.diff(bin_edges))
+    fig2 = go.Figure(data=[
+        go.Scatter(x=bin_edges, y=cdf, name='Cumulative Probability of Summons')
+    ])
+    fig2.update_layout(
+        title_text='Cumulative Probability to Get Character',
+        xaxis_title='Num Summons',
+        yaxis_title='Probability'
+    )
+    fig2.show()
