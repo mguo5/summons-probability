@@ -5,7 +5,7 @@ import plotly.graph_objs as go
 from math import ceil
 
 # Preliminary account details
-_START_PITY = 0
+_START_PITY = 53
 _GACHA_RATE = .994
 _SOFT_PITY_RATE = .666
 _NEXT_5_STAR_50_50 = True
@@ -22,7 +22,7 @@ def getPullCurrencyValue(currency: int = _CURRENCY_PER_SINGLE_PULL, average: flo
     """
     Calculates the number of gacha currency is needed to (on average) get that desired character
     """
-    return ceil(currency * average)
+    return ceil(average) * currency
 
 def getBestCaseList(result_list: list) -> int:
     """
@@ -107,7 +107,9 @@ if __name__ == "__main__":
 
             if got5Star and getCorrectCharacter():
                 if count + prev_count > _START_PITY:
-                    total_pity_count_list.append(count + prev_count)
+                    total_pity_count_list.append(count)
+                    if prev_count > 0:
+                        total_pity_count_list.append(prev_count)
                     extra_summons_list.append(count + prev_count - _START_PITY)
                 break
             elif got5Star:
@@ -117,8 +119,8 @@ if __name__ == "__main__":
     # Print out results in the terminal
     print(f"Average Pity Count: {getAverageList(total_pity_count_list)}")
     print(f"Average Extra Summons: {getAverageList(extra_summons_list)}, or {getPullCurrencyValue(_CURRENCY_PER_SINGLE_PULL, getAverageList(extra_summons_list))} primogems")
-    print(f"Average Worst Case Extra Summons: {getWorstCaseList(extra_summons_list)}")
-    print(f"Average Best Case Extra Summons: {getBestCaseList(extra_summons_list)}")
+    print(f"Average Worst Case Extra Summons: {getWorstCaseList(extra_summons_list)}, or {getPullCurrencyValue(_CURRENCY_PER_SINGLE_PULL, getWorstCaseList(extra_summons_list))} primogems")
+    print(f"Average Best Case Extra Summons: {getBestCaseList(extra_summons_list)}, or {getPullCurrencyValue(_CURRENCY_PER_SINGLE_PULL, getBestCaseList(extra_summons_list))} primogems")
 
     # Generate a distribution plot of the results
     distplot_label = ['Simulated Extra Summons']
